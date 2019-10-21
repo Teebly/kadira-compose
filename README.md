@@ -1,5 +1,12 @@
 # kadira-compose
+## Teebly changes
 
+- start docker (if using a mac)
+- `./setup.sh`
+- go to `localhost:4000`, log in as `admin@teebly.co` and enjoy
+- the UI is already set up with the right key/secret
+
+## Original readme
 This will get [open-source Kadira](https://github.com/kadira-open/kadira-server)
 running on a dedicated host, almost fully automatically using `docker-compose`.
 Specifically, it includes the following dockers:

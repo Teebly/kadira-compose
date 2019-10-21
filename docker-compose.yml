@@ -7,37 +7,13 @@ version: '2'
 services:
   mongo:
     ## Mongo database for both kadira-engine and kadira-ui
-    image: mongo:3.4
+    image: mongo:3.4 # DO NOT UPGRADE MONGO- Kadira needs this version
     volumes:
-      - "/opt/kadira-mongo:/data/db"
+      - "/Users/miro/Downloads/kadira-mongo:/data/db"
       #- mongo:/data
     command: mongod --smallfiles --replSet kadira
     ports:
       - "27017:27017"
-    restart: always
-
-  nginx-proxy:
-    ## Proxy to map https://host:22022 to kadira-engine's port 11011
-    image: jwilder/nginx-proxy
-    ports:
-      - "22022:443"
-      ## 80 and 443 need to mapped here so that letsencrypt can check server
-      - "443:443"
-      - "80:80"
-    volumes:
-      - "/etc/nginx/vhost.d"
-      - "/usr/share/nginx/html"
-      - "/var/run/docker.sock:/tmp/docker.sock:ro"
-      - "/etc/nginx/certs"
-    restart: always
-
-  letsencrypt:
-    ## Automatic SSL certificate acquisition
-    image: jrcs/letsencrypt-nginx-proxy-companion
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock:ro"
-    volumes_from:
-      - nginx-proxy
     restart: always
 
   kadira-engine:
@@ -51,8 +27,6 @@ services:
       - MONGO_SHARD_URL_one=mongodb://mongo/kadira?replicaSet=kadira
       - VIRTUAL_HOST=${HOST}
       - HTTPS_METHOD=noredirect
-      - LETSENCRYPT_HOST=${HOST}
-      - LETSENCRYPT_EMAIL=${EMAIL}
     links:
       - mongo
     restart: always
@@ -62,6 +36,7 @@ services:
     image: vladgolubev/kadira-rma
     environment:
       - MONGO_URL=mongodb://mongo/kadira
+      - TZ=UTC-1
     links:
       - mongo
     restart: always
